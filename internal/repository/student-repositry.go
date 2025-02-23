@@ -2,12 +2,13 @@ package repository
 
 import (
 	"zumar-school/internal/models"
+	"zumar-school/internal/utils"
 
 	"gorm.io/gorm"
 )
 
 type StudentRepository interface {
-	GetAll() ([]models.Student, error)
+	GetAll(page, limit int) ([]models.Student, error)
 	GetByID(id uint) (models.Student, error)
 	Create(student *models.Student) error
 	Update(student *models.Student) error
@@ -22,9 +23,10 @@ func NewStudentRepository(db *gorm.DB) StudentRepository {
 	return &studentRepository{db: db}
 }
 
-func (r *studentRepository) GetAll() ([]models.Student, error) {
+func (r *studentRepository) GetAll(page, limit int) ([]models.Student, error) {
 	var students []models.Student
-	if err := r.db.Preload("Class").Find(&students).Error; err != nil {
+
+	if err := r.db.Preload("Class").Scopes(utils.Paginate(page, limit)).Find(&students).Error; err != nil {
 		return nil, err
 	}
 	return students, nil

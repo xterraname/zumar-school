@@ -13,6 +13,8 @@ var Cfg *Config
 type Config struct {
 	Environment string `envconfig:"ENV" default:"dev"`
 
+	PageLimit int `envconfig:"PAGE_LIMIT" default:"10"`
+
 	Server struct {
 		Host         string        `envconfig:"SERVER_HOST" default:"0.0.0.0"`
 		Port         int           `envconfig:"SERVER_PORT" default:"8080"`
@@ -41,7 +43,6 @@ type Config struct {
 func LoadENV() {
 	_ = godotenv.Load()
 
-	// Cfg uchun xotira ajratish
 	Cfg = &Config{}
 
 	if err := envconfig.Process("", Cfg); err != nil {

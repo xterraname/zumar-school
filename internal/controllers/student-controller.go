@@ -8,6 +8,7 @@ import (
 	"zumar-school/internal/dto"
 	"zumar-school/internal/models"
 	"zumar-school/internal/services"
+	"zumar-school/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,10 @@ func NewStudentController(studentService services.StudentService) *StudentContro
 }
 
 func (ctrl *StudentController) GetStudents(c *gin.Context) {
-	students, err := ctrl.studentService.GetStudents()
+
+	page, limit := utils.GetPaginationParams(c)
+
+	students, err := ctrl.studentService.GetStudents(page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

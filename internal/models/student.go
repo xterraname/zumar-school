@@ -5,6 +5,6 @@ type Student struct {
 	FirstName string `gorm:"type:varchar(32);uniqueIndex:idx_student_fullname" binding:"required,min=3,max=32" json:"first_name"`
 	LastName  string `gorm:"type:varchar(32);uniqueIndex:idx_student_fullname" binding:"required,min=3,max=32" json:"last_name"`
 	MidName   string `gorm:"type:varchar(32);uniqueIndex:idx_student_fullname" binding:"required,min=3,max=32" json:"mid_name"`
-	ClassID   uint
-	Class     Class `binding:"required"`
+	ClassID   uint   `json:"-"`
+	Class     Class  `binding:"required" json:"class"`
 }

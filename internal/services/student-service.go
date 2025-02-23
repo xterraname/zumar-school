@@ -6,7 +6,7 @@ import (
 )
 
 type StudentService interface {
-	GetStudents() ([]models.Student, error)
+	GetStudents(page, limit int) ([]models.Student, error)
 	GetStudent(id uint) (models.Student, error)
 	CreateStudent(student *models.Student) error
 	UpdateStudent(student *models.Student) error
@@ -21,8 +21,8 @@ func NewStudentService(studentRepo repository.StudentRepository) StudentService 
 	return &studentService{studentRepo: studentRepo}
 }
 
-func (s *studentService) GetStudents() ([]models.Student, error) {
-	return s.studentRepo.GetAll()
+func (s *studentService) GetStudents(page, limit int) ([]models.Student, error) {
+	return s.studentRepo.GetAll(page, limit)
 }
 
 func (s *studentService) GetStudent(id uint) (models.Student, error) {
