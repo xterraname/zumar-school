@@ -1,27 +1,50 @@
 package config
 
 import (
-	"log"
-	"os"
+	"fmt"
+	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
-func LoadEnv() error {
-	err := godotenv.Load()
-	if err != nil {
-		log.Printf("Error loading .env file: %v", err)
-		return err
+var Cfg *Config
+
+type Config struct {
+	Environment string `envconfig:"ENV" default:"dev"`
+
+	Server struct {
+		Host         string        `envconfig:"SERVER_HOST" default:"0.0.0.0"`
+		Port         int           `envconfig:"SERVER_PORT" default:"8080"`
+		ReadTimeout  time.Duration `envconfig:"SERVER_READ_TIMEOUT" default:"30s"`
+		WriteTimeout time.Duration `envconfig:"SERVER_WRITE_TIMEOUT" default:"30s"`
 	}
-	return nil
+
+	Database struct {
+		Host     string `envconfig:"DB_HOST" default:"localhost"`
+		Port     int    `envconfig:"DB_PORT" default:"5432"`
+		User     string `envconfig:"DB_USER" required:"true"`
+		Password string `envconfig:"DB_PASSWORD" required:"true"`
+		Name     string `envconfig:"DB_NAME" default:"postgres"`
+		SSLMode  string `envconfig:"DB_SSLMODE" default:"disable"`
+		PoolSize int    `envconfig:"DB_POOL_SIZE" default:"10"`
+	}
+
+	Redis struct {
+		Host     string `envconfig:"REDIS_HOST" default:"localhost"`
+		Port     int    `envconfig:"REDIS_PORT" default:"6379"`
+		Password string `envconfig:"REDIS_PASSWORD"`
+		DB       int    `envconfig:"REDIS_DB" default:"0"`
+	}
 }
 
-func GetPort() string {
-	port, exists := os.LookupEnv("PORT")
+func LoadENV() {
+	_ = godotenv.Load()
 
-	if !exists {
-		port = "8080"
+	// Cfg uchun xotira ajratish
+	Cfg = &Config{}
+
+	if err := envconfig.Process("", Cfg); err != nil {
+		fmt.Printf("config load error: %v", err)
 	}
-
-	return port
 }
