@@ -13,8 +13,12 @@ func PingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
 
+var cfg *config.Config
+
 func init() {
-	config.LoadEnv()
+	config.LoadENV()
+	config.ConnectDB()
+	cfg = config.Cfg
 }
 
 func main() {
@@ -29,9 +33,9 @@ func main() {
 
 	}
 
-	addr := fmt.Sprintf(":%s", config.GetPort())
+	addr := fmt.Sprintf(":%d", cfg.Server.Port)
 
 	if err := router.Run(addr); err != nil {
-		log.Fatalf("Serverni ishga tushirishda xatolik: %v", err)
+		log.Fatalf("Error starting server: %v", err)
 	}
 }
